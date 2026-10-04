@@ -3,139 +3,105 @@
   display: grid;
   grid-template-columns: repeat(3, 1fr);
   grid-template-rows: repeat(3, 1fr);
-  gap: clamp(4px, 1.5vw, 8px);
+  gap: clamp(6px, 2vw, 10px);
   width: 100%;
   max-width: clamp(280px, 90vw, 480px);
   aspect-ratio: 1 / 1;
   margin: 0 auto;
-  padding: clamp(6px, 2vw, 12px);
-  border-radius: 20px;
-  background: var(--board-bg, rgba(255, 255, 255, 0.35));
-  border: 1px solid var(--board-border, rgba(255, 255, 255, 0.6));
-  box-shadow: inset 0 0 0 1px var(--border, transparent),
-    inset 0 2px 4px var(--shadow, rgba(0, 0, 0, 0.08)),
-    0 18px 50px var(--board-shadow, rgba(31, 41, 55, 0.18));
-  backdrop-filter: blur(14px) saturate(150%);
-  -webkit-backdrop-filter: blur(14px) saturate(150%);
+  padding: clamp(8px, 2.4vw, 14px);
+  border-radius: 6px;
+  clip-path: polygon(18px 0, 100% 0, 100% calc(100% - 18px), calc(100% - 18px) 100%, 0 100%, 0 18px);
+  background: var(--board-bg, rgba(4, 9, 18, 0.6));
+  border: 1px solid var(--board-border, rgba(0, 240, 255, 0.5));
+  box-shadow: inset 0 0 26px var(--board-shadow, rgba(0, 240, 255, 0.18)),
+    inset 0 0 6px rgba(0, 0, 0, 0.6),
+    0 18px 50px rgba(0, 0, 0, 0.55);
+  animation: boardPulse 3.4s ease-in-out infinite;
   transition: box-shadow 0.3s ease, border-color 0.3s ease;
 }
 
+/* Linhas de grade com glow entre as células */
+.board::before {
+  content: '';
+  position: absolute;
+  inset: clamp(8px, 2.4vw, 14px);
+  pointer-events: none;
+  background-image:
+    linear-gradient(var(--grid-line, rgba(0, 240, 255, 0.22)) 1px, transparent 1px),
+    linear-gradient(90deg, var(--grid-line, rgba(0, 240, 255, 0.22)) 1px, transparent 1px);
+  background-size: calc(100% / 3) calc(100% / 3);
+  opacity: 0.35;
+  z-index: 0;
+}
+
 .boardWon {
-  border-color: var(--win-glow, #ffc107);
-  box-shadow: inset 0 0 0 1px var(--win-glow, rgba(255, 193, 7, 0.5)),
-    0 0 32px var(--win-glow, rgba(255, 193, 7, 0.45)),
-    0 18px 50px var(--board-shadow, rgba(31, 41, 55, 0.18));
+  border-color: var(--win-glow, #f5ff3d);
+  box-shadow: inset 0 0 0 1px var(--win-glow, rgba(245, 255, 61, 0.5)),
+    inset 0 0 30px var(--win-glow, rgba(245, 255, 61, 0.35)),
+    0 0 40px var(--win-glow, rgba(245, 255, 61, 0.45)),
+    0 18px 50px rgba(0, 0, 0, 0.55);
+  animation: none;
 }
 
 .winOverlay {
   position: absolute;
-  inset: clamp(6px, 2vw, 12px);
+  inset: clamp(8px, 2.4vw, 14px);
+  width: auto;
+  height: auto;
   pointer-events: none;
-  z-index: 3;
+  z-index: 4;
+  overflow: visible;
 }
 
 .winLine {
-  position: absolute;
-  display: block;
-  border-radius: 999px;
-  background: linear-gradient(90deg, var(--win-glow, #ffc107), var(--accent, #ec4899));
-  box-shadow: 0 0 12px var(--win-glow, rgba(255, 193, 7, 0.85)),
-    0 0 28px var(--win-glow, rgba(255, 193, 7, 0.55));
-  transform-origin: left center;
-  animation: drawLine 0.5s ease-out forwards, winGlow 1.6s ease-in-out 0.5s infinite;
+  stroke-dasharray: 100;
+  stroke-dashoffset: 100;
+  animation: drawWinLine 0.55s ease-out forwards, winLineGlow 1.6s ease-in-out 0.55s infinite;
 }
 
-.rowTop,
-.rowMiddle,
-.rowBottom {
-  left: 4%;
-  right: 4%;
-  height: clamp(6px, 1.6vw, 10px);
-  transform-origin: left center;
+.winStopA { stop-color: var(--win-glow, #f5ff3d); }
+.winStopB { stop-color: var(--secondary, #ff2bd6); }
+
+.board > button {
+  animation: cellIn 0.35s cubic-bezier(0.22, 1, 0.36, 1) backwards;
 }
 
-.rowTop { top: calc(16.66% - clamp(3px, 0.8vw, 5px)); }
-.rowMiddle { top: calc(50% - clamp(3px, 0.8vw, 5px)); }
-.rowBottom { top: calc(83.33% - clamp(3px, 0.8vw, 5px)); }
+.board > button:nth-child(1) { animation-delay: 0s; }
+.board > button:nth-child(2) { animation-delay: 0.03s; }
+.board > button:nth-child(3) { animation-delay: 0.06s; }
+.board > button:nth-child(4) { animation-delay: 0.09s; }
+.board > button:nth-child(5) { animation-delay: 0.12s; }
+.board > button:nth-child(6) { animation-delay: 0.15s; }
+.board > button:nth-child(7) { animation-delay: 0.18s; }
+.board > button:nth-child(8) { animation-delay: 0.21s; }
+.board > button:nth-child(9) { animation-delay: 0.24s; }
 
-.colLeft,
-.colMiddle,
-.colRight {
-  top: 4%;
-  bottom: 4%;
-  width: clamp(6px, 1.6vw, 10px);
-  transform-origin: top center;
-  animation: drawLineVertical 0.5s ease-out forwards, winGlow 1.6s ease-in-out 0.5s infinite;
-}
-
-.colLeft { left: calc(16.66% - clamp(3px, 0.8vw, 5px)); }
-.colMiddle { left: calc(50% - clamp(3px, 0.8vw, 5px)); }
-.colRight { left: calc(83.33% - clamp(3px, 0.8vw, 5px)); }
-
-.diagMain {
-  top: 50%;
-  left: 6%;
-  width: 88%;
-  height: clamp(6px, 1.6vw, 10px);
-  transform-origin: left center;
-  transform: rotate(45deg);
-  animation: drawLineDiagonal 0.5s ease-out forwards, winGlow 1.6s ease-in-out 0.5s infinite;
-}
-
-.diagAnti {
-  top: 50%;
-  left: 6%;
-  width: 88%;
-  height: clamp(6px, 1.6vw, 10px);
-  transform-origin: left center;
-  transform: rotate(-45deg);
-  animation: drawLineDiagonal 0.5s ease-out forwards, winGlow 1.6s ease-in-out 0.5s infinite;
-}
-
-@keyframes drawLine {
-  from { transform: scaleX(0); opacity: 0; }
-  to { transform: scaleX(1); opacity: 1; }
-}
-
-@keyframes drawLineVertical {
-  from { transform: scaleY(0); opacity: 0; }
-  to { transform: scaleY(1); opacity: 1; }
-}
-
-@keyframes drawLineDiagonal {
-  from { transform: rotate(var(--diag-angle, 45deg)) scaleX(0); opacity: 0; }
-  to { transform: rotate(var(--diag-angle, 45deg)) scaleX(1); opacity: 1; }
-}
-
-@keyframes winGlow {
+@keyframes boardPulse {
   0%, 100% {
-    box-shadow: 0 0 12px var(--win-glow, rgba(255, 193, 7, 0.85)),
-      0 0 28px var(--win-glow, rgba(255, 193, 7, 0.55));
+    box-shadow: inset 0 0 20px var(--board-shadow, rgba(0, 240, 255, 0.18)),
+      inset 0 0 6px rgba(0, 0, 0, 0.6),
+      0 18px 50px rgba(0, 0, 0, 0.55);
   }
   50% {
-    box-shadow: 0 0 20px var(--win-glow, rgba(255, 193, 7, 1)),
-      0 0 44px var(--win-glow, rgba(255, 193, 7, 0.75));
+    box-shadow: inset 0 0 34px var(--board-shadow, rgba(0, 240, 255, 0.35)),
+      inset 0 0 6px rgba(0, 0, 0, 0.6),
+      0 18px 50px rgba(0, 0, 0, 0.55);
   }
 }
 
-.board > * {
-  animation: cellIn 0.3s ease-out backwards;
+@keyframes drawWinLine {
+  to { stroke-dashoffset: 0; }
 }
 
-.board > *:nth-child(1) { animation-delay: 0s; }
-.board > *:nth-child(2) { animation-delay: 0.03s; }
-.board > *:nth-child(3) { animation-delay: 0.06s; }
-.board > *:nth-child(4) { animation-delay: 0.09s; }
-.board > *:nth-child(5) { animation-delay: 0.12s; }
-.board > *:nth-child(6) { animation-delay: 0.15s; }
-.board > *:nth-child(7) { animation-delay: 0.18s; }
-.board > *:nth-child(8) { animation-delay: 0.21s; }
-.board > *:nth-child(9) { animation-delay: 0.24s; }
+@keyframes winLineGlow {
+  0%, 100% { opacity: 0.75; }
+  50% { opacity: 1; }
+}
 
 @keyframes cellIn {
   from {
     opacity: 0;
-    transform: scale(0.8);
+    transform: scale(0.85);
   }
   to {
     opacity: 1;
@@ -157,20 +123,17 @@
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .board > * {
-    animation: none;
-  }
-
   .board {
+    animation: none;
     transition: none;
   }
 
-  .winLine,
-  .colLeft,
-  .colMiddle,
-  .colRight,
-  .diagMain,
-  .diagAnti {
+  .board > button {
     animation: none;
+  }
+
+  .winLine {
+    animation: none;
+    stroke-dashoffset: 0;
   }
 }
