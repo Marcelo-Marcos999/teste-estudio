@@ -1,30 +1,5 @@
 import styles from './StatusBar.module.css';
 
-const messageStyle = {
-  flex: 1,
-  display: 'inline-flex',
-  alignItems: 'center',
-  justifyContent: 'center',
-  gap: '8px',
-};
-
-const actionsStyle = {
-  display: 'flex',
-  alignItems: 'center',
-  gap: '8px',
-  marginLeft: 'auto',
-};
-
-const spinnerStyle = {
-  display: 'inline-block',
-  width: '14px',
-  height: '14px',
-  borderRadius: '50%',
-  border: '2px solid currentColor',
-  borderTopColor: 'transparent',
-  animation: 'statusBarSpin 0.8s linear infinite',
-};
-
 const DIFFICULTY_LABELS = {
   easy: 'Fácil',
   medium: 'Médio',
@@ -72,12 +47,15 @@ function StatusBar({
 
   return (
     <div className={`${styles.statusBar} ${stateClass}`}>
-      <style>{'@keyframes statusBarSpin { to { transform: rotate(360deg); } }'}</style>
-      <span style={messageStyle} aria-live="polite" aria-atomic="true">
-        {isAiThinking && <span style={spinnerStyle} aria-hidden="true" />}
-        <span>{message}</span>
+      <span className={styles.prompt} aria-hidden="true">&gt;_</span>
+      <span className={styles.message} aria-live="polite" aria-atomic="true">
+        {isAiThinking && <span className={styles.spinner} aria-hidden="true" />}
+        <span className={styles.messageText} key={message}>
+          {message}
+        </span>
+        <span className={styles.cursor} aria-hidden="true" />
       </span>
-      <div style={actionsStyle}>
+      <div className={styles.actions}>
         <span className={styles.modeBadge} aria-label={`Modo de jogo: ${modeLabel}`}>
           {modeLabel}
         </span>

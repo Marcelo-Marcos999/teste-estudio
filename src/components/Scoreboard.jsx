@@ -30,7 +30,14 @@ function useCountUp(target, duration = 600) {
   return display;
 }
 
-function Scoreboard({ scores, onResetScores, theme, gameMode = 'pvp' }) {
+function Scoreboard({
+  scores,
+  onResetScores,
+  theme,
+  gameMode = 'pvp',
+  currentPlayer = null,
+  gameOver = false,
+}) {
   const { xWins = 0, oWins = 0, draws = 0 } = scores || {};
 
   const xDisplay = useCountUp(xWins);
@@ -41,6 +48,9 @@ function Scoreboard({ scores, onResetScores, theme, gameMode = 'pvp' }) {
   const xLabel = isPvAi ? 'Você' : 'X';
   const oLabel = isPvAi ? 'IA' : 'O';
 
+  const xActive = !gameOver && currentPlayer === 'X';
+  const oActive = !gameOver && currentPlayer === 'O';
+
   return (
     <section
       className={styles.scoreboard}
@@ -49,8 +59,13 @@ function Scoreboard({ scores, onResetScores, theme, gameMode = 'pvp' }) {
     >
       <h2 className={styles.title}>Placar</h2>
       <div className={styles.scores}>
-        <div className={`${styles.scoreItem} ${styles.scoreX}`}>
-          <span className={styles.scoreLabel}>{xLabel}</span>
+        <div
+          className={`${styles.scoreItem} ${styles.scoreX} ${xActive ? styles.activeTurn : ''}`}
+        >
+          <span className={styles.scoreLabel}>
+            {xActive && <span className={styles.turnDot} aria-hidden="true" />}
+            {xLabel}
+          </span>
           <span
             className={styles.scoreValue}
             aria-label={`Vitórias de ${xLabel}: ${xWins}`}
@@ -58,8 +73,13 @@ function Scoreboard({ scores, onResetScores, theme, gameMode = 'pvp' }) {
             {xDisplay}
           </span>
         </div>
-        <div className={`${styles.scoreItem} ${styles.scoreO}`}>
-          <span className={styles.scoreLabel}>{oLabel}</span>
+        <div
+          className={`${styles.scoreItem} ${styles.scoreO} ${oActive ? styles.activeTurn : ''}`}
+        >
+          <span className={styles.scoreLabel}>
+            {oActive && <span className={styles.turnDot} aria-hidden="true" />}
+            {oLabel}
+          </span>
           <span
             className={styles.scoreValue}
             aria-label={`Vitórias de ${oLabel}: ${oWins}`}
