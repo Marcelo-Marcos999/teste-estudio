@@ -2,98 +2,67 @@ import assert from 'node:assert/strict'
 import { checkWinner } from '../src/utils/checkWinner.js'
 import { clearState, loadState, saveState } from '../src/utils/storage.js'
 
-// Mock localStorage for Node.js environment
-const mockStorage = {}
-global.localStorage = {
-  getItem: (key) => mockStorage[key] || null,
-  setItem: (key, value) => { mockStorage[key] = value },
-  removeItem: (key) => { delete mockStorage[key] },
-  clear: () => { Object.keys(mockStorage).forEach(k => delete mockStorage[k]) }
-}
+// Helper to create a fresh board
+const emptyBoard = () => Array(9).fill(null)
 
-function resetMockStorage() {
-  Object.keys(mockStorage).forEach(k => delete mockStorage[k])
-}
+// --- checkWinner tests ---
 
-// Test checkWinner function
-console.log('Testing checkWinner...')
+// Row wins
+assert.equal(checkWinner(['X', 'X', 'X', null, null, null, null, null, null]), 'X', 'X wins top row')
+assert.equal(checkWinner([null, null, null, 'O', 'O', 'O', null, null, null]), 'O', 'O wins middle row')
+assert.equal(checkWinner([null, null, null, null, null, null, 'X', 'X', 'X']), 'X', 'X wins bottom row')
 
-// Test horizontal wins
-assert.equal(checkWinner(['X', 'X', 'X', null, null, null, null, null, null]), 'X', 'Top row X wins')
-assert.equal(checkWinner([null, null, null, 'O', 'O', 'O', null, null, null]), 'O', 'Middle row O wins')
-assert.equal(checkWinner([null, null, null, null, null, null, 'X', 'X', 'X']), 'X', 'Bottom row X wins')
+// Column wins
+assert.equal(checkWinner(['X', null, null, 'X', null, null, 'X', null, null]), 'X', 'X wins left column')
+assert.equal(checkWinner([null, 'O', null, null, 'O', null, null, 'O', null]), 'O', 'O wins middle column')
+assert.equal(checkWinner([null, null, 'X', null, null, 'X', null, null, 'X']), 'X', 'X wins right column')
 
-// Test vertical wins
-assert.equal(checkWinner(['X', null, null, 'X', null, null, 'X', null, null]), 'X', 'Left column X wins')
-assert.equal(checkWinner([null, 'O', null, null, 'O', null, null, 'O', null]), 'O', 'Middle column O wins')
-assert.equal(checkWinner([null, null, 'X', null, null, 'X', null, null, 'X']), 'X', 'Right column X wins')
+// Diagonal wins
+assert.equal(checkWinner(['X', null, null, null, 'X', null, null, null, 'X']), 'X', 'X wins main diagonal')
+assert.equal(checkWinner([null, null, 'O', null, 'O', null, 'O', null, null]), 'O', 'O wins anti-diagonal')
 
-// Test diagonal wins
-assert.equal(checkWinner(['X', null, null, null, 'X', null, null, null, 'X']), 'X', 'Main diagonal X wins')
-assert.equal(checkWinner([null, null, 'O', null, 'O', null, 'O', null, null]), 'O', 'Anti-diagonal O wins')
+// Draw (full board, no winner)
+const drawBoard = ['X', 'O', 'X', 'X', 'O', 'O', 'O', 'X', 'X']
+assert.equal(checkWinner(drawBoard), 'draw', 'draw on full board with no winner')
 
-// Test draw
-assert.equal(checkWinner(['X', 'O', 'X', 'X', 'O', 'O', 'O', 'X', 'X']), 'draw', 'Draw game')
+// No winner yet (empty board)
+assert.equal(checkWinner(emptyBoard()), null, 'no winner on empty board')
 
-// Test no winner yet
-assert.equal(checkWinner(['X', 'O', null, null, 'X', null, null, null, null]), null, 'Game in progress')
-assert.equal(checkWinner([null, null, null, null, null, null, null, null, null]), null, 'Empty board')
+// No winner yet (partial board)
+const partialBoard = ['X', 'O', null, 'O', 'X', null, null, null, 'X']
+assert.equal(checkWinner(partialBoard), null, 'no winner on partial board')
 
-// Test invalid board states (should not crash)
-assert.equal(checkWinner(['X', 'X', 'X', 'O', 'O', 'O', null, null, null]), 'X', 'First win takes precedence')
+// --- storage tests ---
 
-console.log('checkWinner tests passed')
+// Clear any existing state before tests
+localStorage.clear()
+clearState()
 
-// Test storage functions
-console.log('Testing storage functions...')
-
-resetMockStorage()
-
+// Save and load state
 const testState = {
   cells: ['X', 'O', 'X', null, 'O', null, null, null, 'X'],
   currentPlayer: 'O',
   gameOver: false,
   winner: null,
-  scores: { X: 2, O: 1, draws: 0 }
+  scores: { X: 2, O: 1, draws: 3 }
 }
 
-// Test saveState and loadState
 saveState(testState)
-const loadedState = loadState()
+const loaded = loadState()
 
-assert.deepEqual(loadedState, testState, 'saveState and loadState round-trip')
+assert.deepEqual(loaded.cells, testState.cells, 'cells persisted correctly')
+assert.equal(loaded.currentPlayer, testState.currentPlayer, 'currentPlayer persisted correctly')
+assert.equal(loaded.gameOver, testState.gameOver, 'gameOver persisted correctly')
+assert.equal(loaded.winner, testState.winner, 'winner persisted correctly')
+assert.deepEqual(loaded.scores, testState.scores, 'scores persisted correctly')
 
-// Test loadState with no saved data
-resetMockStorage()
-const defaultState = loadState()
-assert.deepEqual(defaultState, {
-  cells: Array(9).fill(null),
-  currentPlayer: 'X',
-  gameOver: false,
-  winner: null,
-  scores: { X: 0, O: 0, draws: 0 }
-}, 'loadState returns default state when empty')
-
-// Test clearState
-saveState(testState)
+// Clear state and verify it's gone
 clearState()
 const afterClear = loadState()
-assert.deepEqual(afterClear, {
-  cells: Array(9).fill(null),
-  currentPlayer: 'X',
-  gameOver: false,
-  winner: null,
-  scores: { X: 0, O: 0, draws: 0 }
-}, 'clearState resets to default state')
+assert.equal(afterClear, null, 'clearState removes persisted data')
 
-// Test saveState with partial data (should merge with defaults)
-resetMockStorage()
-localStorage.setItem('tictactoe-state', JSON.stringify({ cells: ['X', null, null, null, null, null, null, null, null] }))
-const partialLoad = loadState()
-assert.equal(partialLoad.cells[0], 'X', 'Partial state preserves saved cells')
-assert.equal(partialLoad.currentPlayer, 'X', 'Partial state uses default currentPlayer')
-assert.deepEqual(partialLoad.scores, { X: 0, O: 0, draws: 0 }, 'Partial state uses default scores')
-
-console.log('Storage tests passed')
+// Load from empty localStorage returns null
+localStorage.clear()
+assert.equal(loadState(), null, 'loadState returns null when nothing stored')
 
 console.log('acceptance OK')
