@@ -9,6 +9,10 @@ export function applyThemeClass(theme) {
   }
 }
 
+export function useTheme() {
+  return useContext(ThemeContext);
+}
+
 export function ThemeProvider({ children }) {
   const [theme, setTheme] = useState(() => loadTheme());
 
