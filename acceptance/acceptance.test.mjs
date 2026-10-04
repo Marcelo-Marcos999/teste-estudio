@@ -1,5 +1,3 @@
-import { test } from 'node:test';
-import assert from 'node:assert';
 import { loadTheme, saveTheme, loadMode, saveMode } from '../src/utils/storage.js';
 
 // Mock global de localStorage para o ambiente Node.
