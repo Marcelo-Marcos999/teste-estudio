@@ -20,7 +20,15 @@ export function loadState() {
   try {
     const stored = localStorage.getItem(STORAGE_KEY);
     if (stored) {
-      return JSON.parse(stored);
+      const parsed = JSON.parse(stored);
+      return {
+        ...DEFAULT_STATE,
+        ...parsed,
+        scores: {
+          ...DEFAULT_STATE.scores,
+          ...(parsed.scores || {}),
+        },
+      };
     }
   } catch (error) {
     console.error('Failed to load game state:', error);
