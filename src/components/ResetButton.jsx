@@ -44,7 +44,7 @@ const ResetButton = ({ onClick, disabled = false, loading = false }) => {
   return (
     <button
       type="button"
-      className={styles.resetButton}
+      className={`${styles.resetButton} ${styles.pressable}`}
       onClick={onClick}
       disabled={isDisabled}
       aria-label="Reiniciar jogo"
