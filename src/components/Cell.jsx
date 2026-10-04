@@ -1,11 +1,9 @@
 import React from 'react';
 import styles from './Cell.module.css';
 
-function Cell({ value, index, onClick, disabled }) {
-  const row = Math.floor(index / 3) + 1;
-  const col = (index % 3) + 1;
-  const content = value ? value : 'vazio';
-  const ariaLabel = `Linha ${row}, Coluna ${col}, ${content}`;
+function Cell({ value, index, onClick, disabled, winning = false, draw = false }) {
+  const content = value || 'vazia';
+  const ariaLabel = `Célula ${index + 1}, ${content}`;
 
   const handleKeyDown = (e) => {
     if ((e.key === 'Enter' || e.key === ' ') && !disabled) {
@@ -14,10 +12,23 @@ function Cell({ value, index, onClick, disabled }) {
     }
   };
 
+  const classNames = [
+    styles.cell,
+    value ? styles.filled : '',
+    value === 'X' ? styles.x : value === 'O' ? styles.o : '',
+    winning ? styles.winning : '',
+    draw ? styles.draw : '',
+    disabled ? styles.disabled : '',
+  ]
+    .filter(Boolean)
+    .join(' ');
+
   return (
     <button
       type="button"
-      className={`${styles.cell} ${value ? styles.filled : ''} ${value === 'X' ? styles.x : value === 'O' ? styles.o : ''}`}
+      role="gridcell"
+      className={classNames}
+      style={{ animationDelay: `${index * 50}ms` }}
       onClick={() => !disabled && onClick(index)}
       onKeyDown={handleKeyDown}
       disabled={disabled}

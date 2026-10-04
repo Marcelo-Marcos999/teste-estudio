@@ -10,7 +10,7 @@ const DEFAULT_MODE = 'pvp';
 const DEFAULT_DIFFICULTY = 'medium';
 
 const VALID_THEMES = ['light', 'dark'];
-const VALID_MODES = ['pvp', 'cpu'];
+const VALID_MODES = ['pvp', 'pvai'];
 const VALID_DIFFICULTIES = ['easy', 'medium', 'hard'];
 
 const DEFAULT_STATE = {
@@ -86,6 +86,9 @@ export function loadMode() {
 export function saveMode(mode) {
   return writeEnum(MODE_KEY, mode, VALID_MODES);
 }
+
+export const loadGameMode = loadMode;
+export const saveGameMode = saveMode;
 
 export function loadDifficulty() {
   return readEnum(DIFFICULTY_KEY, VALID_DIFFICULTIES, DEFAULT_DIFFICULTY);
@@ -181,6 +184,8 @@ export default {
   saveTheme,
   loadMode,
   saveMode,
+  loadGameMode,
+  saveGameMode,
   loadDifficulty,
   saveDifficulty,
   saveState,

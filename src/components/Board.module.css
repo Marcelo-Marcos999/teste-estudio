@@ -2,11 +2,38 @@
   display: grid;
   grid-template-columns: repeat(3, 1fr);
   grid-template-rows: repeat(3, 1fr);
-  gap: 4px;
+  gap: clamp(4px, 1.5vw, 8px);
   width: 100%;
-  max-width: 400px;
+  max-width: clamp(280px, 90vw, 480px);
   aspect-ratio: 1 / 1;
   margin: 0 auto;
+  box-shadow: inset 0 0 0 1px var(--border, transparent),
+    inset 0 2px 4px var(--shadow, rgba(0, 0, 0, 0.08));
+}
+
+.board > * {
+  animation: cellIn 0.3s ease-out backwards;
+}
+
+.board > *:nth-child(1) { animation-delay: 0s; }
+.board > *:nth-child(2) { animation-delay: 0.03s; }
+.board > *:nth-child(3) { animation-delay: 0.06s; }
+.board > *:nth-child(4) { animation-delay: 0.09s; }
+.board > *:nth-child(5) { animation-delay: 0.12s; }
+.board > *:nth-child(6) { animation-delay: 0.15s; }
+.board > *:nth-child(7) { animation-delay: 0.18s; }
+.board > *:nth-child(8) { animation-delay: 0.21s; }
+.board > *:nth-child(9) { animation-delay: 0.24s; }
+
+@keyframes cellIn {
+  from {
+    opacity: 0;
+    transform: scale(0.8);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
 }
 
 @media (max-width: 480px) {
@@ -18,6 +45,12 @@
 
 @media (min-width: 481px) {
   .board {
-    max-width: 400px;
+    max-width: clamp(280px, 90vw, 480px);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .board > * {
+    animation: none;
   }
 }
