@@ -1,4 +1,4 @@
-import { IconTheme } from './icons';
+import { SunIcon, MoonIcon } from './icons';
 import styles from './StatusBar.module.css';
 
 const DIFFICULTY_LABELS = {
@@ -73,7 +73,11 @@ function StatusBar({
           aria-label={isDark ? 'Ativar tema claro' : 'Ativar tema escuro'}
           title={isDark ? 'Tema claro' : 'Tema escuro'}
         >
-          <IconTheme className={styles.themeIcon} />
+          {isDark ? (
+            <MoonIcon className={styles.themeIcon} />
+          ) : (
+            <SunIcon className={styles.themeIcon} />
+          )}
         </button>
       </div>
     </div>
