@@ -1,6 +1,6 @@
 import styles from './Scoreboard.module.css';
 
-function Scoreboard({ scores, onResetScores }) {
+function Scoreboard({ scores, onResetScores, gameMode }) {
   const { xWins = 0, oWins = 0, draws = 0 } = scores || {};
 
   return (
@@ -20,6 +20,9 @@ function Scoreboard({ scores, onResetScores }) {
           <span className={styles.value}>{draws}</span>
         </div>
       </div>
+      <p className={styles.mode}>
+        Modo: {gameMode === 'pvai' ? 'PvAI' : 'PvP'}
+      </p>
       {onResetScores && (
         <button
           className={styles.resetButton}
