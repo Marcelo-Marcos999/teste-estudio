@@ -43,4 +43,12 @@ export function isDraw(cells) {
   return allFilled && checkWinner(cells) === null;
 }
 
+export function getWinnerInfo(cells) {
+  const line = getWinningLine(cells);
+  if (!line) {
+    return { winner: null, line: null };
+  }
+  return { winner: cells[line[0]], line };
+}
+
 export default checkWinner;
