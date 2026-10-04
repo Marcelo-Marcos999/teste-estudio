@@ -1,6 +1,6 @@
 import { useState, useEffect, useCallback } from 'react';
 import { checkWinner } from '../utils/checkWinner';
-import { saveState, loadState, clearState } from '../utils/storage';
+import { saveState, loadState, clearState, loadMode, saveMode } from '../utils/storage';
 
 const INITIAL_STATE = {
   cells: Array(9).fill(null),
@@ -8,6 +8,7 @@ const INITIAL_STATE = {
   gameOver: false,
   winner: null,
   scores: { xWins: 0, oWins: 0, draws: 0 },
+  gameMode: loadMode(),
 };
 
 export function useTicTacToe() {
@@ -19,6 +20,17 @@ export function useTicTacToe() {
   useEffect(() => {
     saveState(state);
   }, [state]);
+
+  useEffect(() => {
+    saveMode(state.gameMode);
+  }, [state.gameMode]);
+
+  const toggleGameMode = useCallback(() => {
+    setState((prev) => ({
+      ...prev,
+      gameMode: prev.gameMode === 'pvp' ? 'pvai' : 'pvp',
+    }));
+  }, []);
 
   const makeMove = useCallback((index) => {
     setState((prev) => {
@@ -79,8 +91,10 @@ export function useTicTacToe() {
     gameOver: state.gameOver,
     winner: state.winner,
     scores: state.scores,
+    gameMode: state.gameMode,
     makeMove,
     resetGame,
     resetScores,
+    toggleGameMode,
   };
 }
