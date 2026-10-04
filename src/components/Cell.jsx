@@ -1,7 +1,7 @@
 import React from 'react';
 import styles from './Cell.module.css';
 
-function Cell({ value, index, onClick, disabled }) {
+function Cell({ value, index, onClick, disabled, theme }) {
   const row = Math.floor(index / 3) + 1;
   const col = (index % 3) + 1;
   const content = value ? value : 'vazio';
@@ -17,7 +17,7 @@ function Cell({ value, index, onClick, disabled }) {
   return (
     <button
       type="button"
-      className={`${styles.cell} ${value ? styles.filled : ''} ${value === 'X' ? styles.x : value === 'O' ? styles.o : ''}`}
+      className={`${styles.cell} ${value ? styles.filled : ''} ${value === 'X' ? styles.x : value === 'O' ? styles.o : ''} ${theme === 'dark' ? styles.dark : ''}`}
       onClick={() => !disabled && onClick(index)}
       onKeyDown={handleKeyDown}
       disabled={disabled}
