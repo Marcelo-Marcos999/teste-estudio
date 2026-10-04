@@ -7,6 +7,14 @@ import ResetButton from './components/ResetButton';
 import Scoreboard from './components/Scoreboard';
 import { loadSound, saveSound } from './utils/storage';
 import { playMove, playWin, playDraw } from './utils/sound';
+import {
+  IconPvp,
+  IconPvia,
+  IconFacil,
+  IconMedio,
+  IconDificil,
+  IconImpossivel,
+} from './components/icons';
 import styles from './App.module.css';
 
 function ModeSelector({ gameMode, onSelect }) {
@@ -18,7 +26,8 @@ function ModeSelector({ gameMode, onSelect }) {
         onClick={() => onSelect('pvp')}
         aria-pressed={gameMode === 'pvp'}
       >
-        👥 PvP
+        <IconPvp className={styles.modeIcon} />
+        <span className={styles.modeLabel}>PvP</span>
       </button>
       <button
         type="button"
@@ -26,17 +35,18 @@ function ModeSelector({ gameMode, onSelect }) {
         onClick={() => onSelect('pvai')}
         aria-pressed={gameMode === 'pvai'}
       >
-        🤖 PvIA
+        <IconPvia className={styles.modeIcon} />
+        <span className={styles.modeLabel}>PvIA</span>
       </button>
     </div>
   );
 }
 
 const DIFFICULTY_OPTIONS = [
-  { value: 'easy', label: 'Fácil', icon: '🌱' },
-  { value: 'medium', label: 'Médio', icon: '⚡' },
-  { value: 'hard', label: 'Difícil', icon: '🔥' },
-  { value: 'impossible', label: 'Impossível', icon: '💀' },
+  { value: 'easy', label: 'Fácil', Icon: IconFacil },
+  { value: 'medium', label: 'Médio', Icon: IconMedio },
+  { value: 'hard', label: 'Difícil', Icon: IconDificil },
+  { value: 'impossible', label: 'Impossível', Icon: IconImpossivel },
 ];
 
 function DifficultySelector({ difficulty, onSelect, disabled }) {
@@ -60,9 +70,7 @@ function DifficultySelector({ difficulty, onSelect, disabled }) {
             aria-pressed={difficulty === opt.value}
             disabled={disabled}
           >
-            <span className={styles.difficultyIcon} aria-hidden="true">
-              {opt.icon}
-            </span>
+            <opt.Icon className={styles.difficultyIcon} />
             <span className={styles.difficultyLabel}>{opt.label}</span>
           </button>
         ))}

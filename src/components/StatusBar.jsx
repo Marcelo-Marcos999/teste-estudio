@@ -1,3 +1,4 @@
+import { IconTheme } from './icons';
 import styles from './StatusBar.module.css';
 
 const DIFFICULTY_LABELS = {
@@ -72,7 +73,7 @@ function StatusBar({
           aria-label={isDark ? 'Ativar tema claro' : 'Ativar tema escuro'}
           title={isDark ? 'Tema claro' : 'Tema escuro'}
         >
-          {isDark ? '☀️' : '🌙'}
+          <IconTheme className={styles.themeIcon} />
         </button>
       </div>
     </div>

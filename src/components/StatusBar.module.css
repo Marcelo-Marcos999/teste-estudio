@@ -108,6 +108,20 @@
   box-shadow: 0 0 14px var(--btn-shadow, rgba(0, 240, 255, 0.5));
 }
 
+.themeIcon {
+  width: 20px;
+  height: 20px;
+  vertical-align: middle;
+  color: #1a1a2e;
+  filter: drop-shadow(0 0 4px rgba(180, 100, 255, 0.4));
+  transition: filter 0.2s ease, color 0.2s ease;
+}
+
+.themeButton:hover .themeIcon,
+.themeButton:active .themeIcon {
+  filter: drop-shadow(0 0 6px rgba(180, 100, 255, 0.7));
+}
+
 .themeButton:active {
   transform: scale(0.94);
 }
