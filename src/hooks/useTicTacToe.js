@@ -1,6 +1,7 @@
 import { useState, useEffect, useCallback } from 'react';
 import { checkWinner } from '../utils/checkWinner';
-import { saveState, loadState, clearState } from '../utils/storage';
+import { saveState, loadState, clearState, loadMode, saveMode } from '../utils/storage';
+import { getBestMove } from '../utils/ai';
 
 const INITIAL_STATE = {
   cells: Array(9).fill(null),
@@ -15,6 +16,8 @@ export function useTicTacToe() {
     const loaded = loadState();
     return loaded ? { ...INITIAL_STATE, ...loaded } : INITIAL_STATE;
   });
+
+  const [gameMode, setGameModeState] = useState(() => loadMode());
 
   useEffect(() => {
     saveState(state);
@@ -56,6 +59,21 @@ export function useTicTacToe() {
     });
   }, []);
 
+  useEffect(() => {
+    if (gameMode !== 'pvai') return undefined;
+    if (state.gameOver) return undefined;
+    if (state.currentPlayer !== 'O') return undefined;
+
+    const timer = setTimeout(() => {
+      const idx = getBestMove([...state.cells], 'O');
+      if (idx !== null && idx !== undefined) {
+        makeMove(idx);
+      }
+    }, 300);
+
+    return () => clearTimeout(timer);
+  }, [gameMode, state.currentPlayer, state.gameOver, state.cells, makeMove]);
+
   const resetGame = useCallback(() => {
     setState((prev) => ({
       ...prev,
@@ -73,14 +91,28 @@ export function useTicTacToe() {
     }));
   }, []);
 
+  const setGameMode = useCallback((mode) => {
+    saveMode(mode);
+    setGameModeState(mode);
+    setState((prev) => ({
+      ...prev,
+      cells: Array(9).fill(null),
+      currentPlayer: 'X',
+      gameOver: false,
+      winner: null,
+    }));
+  }, []);
+
   return {
     cells: state.cells,
     currentPlayer: state.currentPlayer,
     gameOver: state.gameOver,
     winner: state.winner,
     scores: state.scores,
+    gameMode,
     makeMove,
     resetGame,
     resetScores,
+    setGameMode,
   };
 }
