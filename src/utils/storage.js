@@ -11,13 +11,13 @@ const DEFAULT_DIFFICULTY = 'medium';
 
 const VALID_THEMES = ['light', 'dark'];
 const VALID_MODES = ['pvp', 'pvai'];
-const VALID_DIFFICULTIES = ['easy', 'medium', 'hard'];
+const VALID_DIFFICULTIES = ['easy', 'medium', 'hard', 'impossible'];
 
 const DEFAULT_STATE = {
   cells: Array(9).fill(null),
   currentPlayer: 'X',
   gameOver: false,
-  scores: { X: 0, O: 0, draws: 0 },
+  scores: { xWins: 0, oWins: 0, draws: 0 },
   winner: null,
 };
 
@@ -71,8 +71,19 @@ function writeEnum(key, value, validValues) {
   return safeSetItem(key, value);
 }
 
+function getSystemTheme() {
+  try {
+    if (typeof window !== 'undefined' && typeof window.matchMedia === 'function') {
+      return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+    }
+  } catch (error) {
+    // matchMedia unavailable, fall back to default
+  }
+  return DEFAULT_THEME;
+}
+
 export function loadTheme() {
-  return readEnum(THEME_KEY, VALID_THEMES, DEFAULT_THEME);
+  return readEnum(THEME_KEY, VALID_THEMES, getSystemTheme());
 }
 
 export function saveTheme(theme) {
