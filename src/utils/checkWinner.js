@@ -11,12 +11,13 @@ export function checkWinner(cells) {
   ];
 
   for (const [a, b, c] of lines) {
-    if (cells[a] && cells[a] === cells[b] && cells[a] === cells[c]) {
-      return cells[a];
+    const value = cells[a];
+    if ((value === 'X' || value === 'O') && value === cells[b] && value === cells[c]) {
+      return value;
     }
   }
 
-  if (cells.every((cell) => cell !== null)) {
+  if (cells.every((cell) => cell === 'X' || cell === 'O')) {
     return 'draw';
   }
 
