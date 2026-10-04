@@ -23,6 +23,7 @@ function validateState(state) {
   const hasWinner = state.winner === 'X' || state.winner === 'O';
   const isDraw = state.winner === 'draw';
 
+  // If stored winner mismatches actual, correct it
   if (hasWinner && actualResult !== state.winner) {
     return { ...state, winner: null, gameOver: false };
   }
@@ -31,14 +32,21 @@ function validateState(state) {
     return { ...state, winner: null, gameOver: false };
   }
 
-  if (state.gameOver && !hasWinner && !isDraw) {
-    if (actualResult === 'X' || actualResult === 'O') {
-      return { ...state, winner: actualResult };
+  // If actualResult indicates a winner/draw but stored winner is null, set it
+  if (actualResult !== null) {
+    const newWinner = actualResult; // 'X', 'O', or 'draw'
+    const newGameOver = true;
+    // If already correct, keep as is (but ensure gameOver true)
+    if (state.winner === newWinner && state.gameOver === true) {
+      return state;
     }
-    if (actualResult === 'draw') {
-      return { ...state, winner: 'draw' };
-    }
-    return { ...state, gameOver: false };
+    return { ...state, winner: newWinner, gameOver: newGameOver };
+  }
+
+  // No winner/draw (actualResult is null)
+  // If stored gameOver is true but no winner, reset
+  if (state.gameOver) {
+    return { ...state, gameOver: false, winner: null };
   }
 
   return state;
