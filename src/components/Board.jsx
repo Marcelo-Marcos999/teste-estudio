@@ -12,6 +12,7 @@ function Board({ cells, onCellClick, disabled }) {
           value={value}
           onClick={onCellClick}
           disabled={disabled || value !== null}
+          style={{ animationDelay: `${index * 50}ms` }}
         />
       ))}
     </div>
