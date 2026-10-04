@@ -30,12 +30,16 @@ function useCountUp(target, duration = 600) {
   return display;
 }
 
-function Scoreboard({ scores, onResetScores, theme }) {
+function Scoreboard({ scores, onResetScores, theme, gameMode = 'pvp' }) {
   const { xWins = 0, oWins = 0, draws = 0 } = scores || {};
 
   const xDisplay = useCountUp(xWins);
   const oDisplay = useCountUp(oWins);
   const drawDisplay = useCountUp(draws);
+
+  const isPvAi = gameMode === 'pvai';
+  const xLabel = isPvAi ? 'Você' : 'X';
+  const oLabel = isPvAi ? 'IA' : 'O';
 
   return (
     <section
@@ -46,19 +50,19 @@ function Scoreboard({ scores, onResetScores, theme }) {
       <h2 className={styles.title}>Placar</h2>
       <div className={styles.scores}>
         <div className={`${styles.scoreItem} ${styles.scoreX}`}>
-          <span className={styles.scoreLabel}>X</span>
+          <span className={styles.scoreLabel}>{xLabel}</span>
           <span
             className={styles.scoreValue}
-            aria-label={`Vitórias de X: ${xWins}`}
+            aria-label={`Vitórias de ${xLabel}: ${xWins}`}
           >
             {xDisplay}
           </span>
         </div>
         <div className={`${styles.scoreItem} ${styles.scoreO}`}>
-          <span className={styles.scoreLabel}>O</span>
+          <span className={styles.scoreLabel}>{oLabel}</span>
           <span
             className={styles.scoreValue}
-            aria-label={`Vitórias de O: ${oWins}`}
+            aria-label={`Vitórias de ${oLabel}: ${oWins}`}
           >
             {oDisplay}
           </span>
