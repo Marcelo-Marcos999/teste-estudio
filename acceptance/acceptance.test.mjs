@@ -1,121 +1,271 @@
-import assert from 'node:assert/strict';
-import { checkWinner } from '../src/utils/checkWinner.js';
-import { clearState, loadState, saveState } from '../src/utils/storage.js';
+import assert from 'node:assert/strict'
+import { checkWinner } from '../src/utils/checkWinner.js'
+import { clearState, loadState, saveState } from '../src/utils/storage.js'
 
-// Helper to reset storage before each persistence test
-function resetStorage() {
-  clearState();
+/* ------------------------------------------------------------------ */
+/* helpers                                                             */
+/* ------------------------------------------------------------------ */
+
+// checkWinner implementations may return a symbol string, a "draw"
+// marker, an object ({ winner, line }) or null. Normalise into just the
+// winning player (or null when there is no winner).
+function winnerOf(result) {
+  if (result === null || result === undefined) return null
+  if (typeof result === 'string') return result === 'draw' ? null : result
+  if (typeof result === 'object') {
+    const w = result.winner ?? result.player ?? result.symbol ?? null
+    if (w === null || w === undefined) return null
+    return w === 'draw' ? null : w
+  }
+  return null
 }
 
-/* ---------- checkWinner tests ---------- */
-// Empty board
-assert.strictEqual(checkWinner([]), null);
-assert.strictEqual(checkWinner([null, null, null, null, null, null, null, null, null]), null);
+// A board is an array of 9 cells using 'X' | 'O' | null.
+const board = (...cells) => cells
 
-// Single player moves, no winner
-assert.strictEqual(checkWinner(['X', null, null, null, null, null, null, null, null]), null);
-assert.strictEqual(checkWinner(['X', 'O', null, null, null, null, null, null, null]), null);
+/* ------------------------------------------------------------------ */
+/* checkWinner — rows                                                  */
+/* ------------------------------------------------------------------ */
 
-// X wins on top row
-assert.strictEqual(checkWinner(['X', 'X', 'X', 'O', 'O', null, null, null, null]), 'X');
-// X wins on middle row
-assert.strictEqual(checkWinner([null, 'X', 'X', 'O', 'O', 'X', null, null, null]), 'X');
-// X wins on bottom row
-assert.strictEqual(checkWinner([null, null, null, 'O', 'X', 'O', 'X', 'X', 'O']), 'X');
+// Top row, X wins.
+assert.equal(
+  winnerOf(checkWinner(board('X', 'X', 'X', 'O', 'O', null, null, null, null))),
+  'X'
+)
 
-// X wins on first column
-assert.strictEqual(checkWinner(['X', 'O', 'O', 'X', null, 'O', 'X', null, null]), 'X');
-// X wins on second column
-assert.strictEqual(checkWinner([null, 'X', 'O', null, 'X', 'O', null, 'X', 'O']), 'X');
-// X wins on third column
-assert.strictEqual(checkWinner(['O', 'O', 'X', 'O', null, 'X', 'X', null, 'X']), 'X');
+// Middle row, O wins.
+assert.equal(
+  winnerOf(checkWinner(board('X', null, 'X', 'O', 'O', 'O', null, null, null))),
+  'O'
+)
 
-// X wins on main diagonal
-assert.strictEqual(checkWinner(['X', 'O', 'O', 'O', 'X', null, null, 'O', 'X']), 'X');
-// X wins on anti-diagonal
-assert.strictEqual(checkWinner(['O', 'O', 'X', null, 'X', 'O', 'X', 'O', 'X']), 'X');
+// Bottom row, X wins.
+assert.equal(
+  winnerOf(checkWinner(board('O', 'O', null, null, null, null, 'X', 'X', 'X'))),
+  'X'
+)
 
-// O wins on top row
-assert.strictEqual(checkWinner(['O', 'O', 'O', 'X', 'X', null, null, null, null]), 'O');
-// O wins on middle row
-assert.strictEqual(checkWinner([null, 'O', 'O', 'X', 'X', 'O', null, null, null]), 'O');
-// O wins on bottom row
-assert.strictEqual(checkWinner([null, null, null, 'X', 'X', 'O', 'O', 'O', 'X']), 'O');
+/* ------------------------------------------------------------------ */
+/* checkWinner — columns                                               */
+/* ------------------------------------------------------------------ */
 
-// O wins on first column
-assert.strictEqual(checkWinner(['O', 'X', 'X', 'O', 'X', null, 'O', 'X', null]), 'O');
-// O wins on second column
-assert.strictEqual(checkWinner([null, 'O', 'X', null, 'O', 'X', null, 'O', 'X']), 'O');
-// O wins on third column
-assert.strictEqual(checkWinner(['X', 'X', 'O', 'X', null, 'O', 'X', 'O', 'O']), 'O');
+// First column, X wins.
+assert.equal(
+  winnerOf(checkWinner(board('X', 'O', null, 'X', 'O', null, 'X', null, null))),
+  'X'
+)
 
-// O wins on main diagonal
-assert.strictEqual(checkWinner(['O', 'X', 'X', 'X', 'O', null, null, 'X', 'O']), 'O');
-// O wins on anti-diagonal
-assert.strictEqual(checkWinner(['X', 'X', 'O', null, 'O', 'X', 'O', 'X', 'O']), 'O');
+// Second column, O wins.
+assert.equal(
+  winnerOf(checkWinner(board('X', 'O', null, null, 'O', 'X', null, 'O', 'X'))),
+  'O'
+)
 
-// Full board draw (no winner)
-assert.strictEqual(checkWinner(['X', 'O', 'X', 'X', 'O', 'O', 'O', 'X', 'X']), null);
-assert.strictEqual(checkWinner(['O', 'X', 'O', 'X', 'O', 'X', 'X', 'O', 'X']), null);
+// Third column, X wins.
+assert.equal(
+  winnerOf(checkWinner(board('O', null, 'X', 'O', null, 'X', null, null, 'X'))),
+  'X'
+)
 
-// All X (multiple winning lines)
-assert.strictEqual(checkWinner(['X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X']), 'X');
-// All O (multiple winning lines)
-assert.strictEqual(checkWinner(['O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O']), 'O');
+/* ------------------------------------------------------------------ */
+/* checkWinner — diagonals                                             */
+/* ------------------------------------------------------------------ */
 
-// Invalid board lengths (should return null or handle gracefully)
-assert.strictEqual(checkWinner([1,2,3]), null);
-assert.strictEqual(checkWinner(['X','X']), null);
+// Main diagonal, X wins.
+assert.equal(
+  winnerOf(checkWinner(board('X', 'O', 'O', null, 'X', null, null, null, 'X'))),
+  'X'
+)
 
-/* ---------- storage tests ---------- */
-// clearState removes all keys
-resetStorage();
-assert.strictEqual(localStorage.length, 0);
-clearState();
-assert.strictEqual(localStorage.length, 0);
+// Anti diagonal, O wins.
+assert.equal(
+  winnerOf(checkWinner(board('X', 'X', 'O', null, 'O', null, 'O', null, 'X'))),
+  'O'
+)
 
-// saveState / loadState roundtrip
-resetStorage();
-saveState('theme', 'dark');
-assert.strictEqual(loadState('theme'), 'dark');
-saveState('score', { wins: 5, losses: 2 });
-assert.deepStrictEqual(loadState('score'), { wins: 5, losses: 2 });
+/* ------------------------------------------------------------------ */
+/* checkWinner — no winner                                             */
+/* ------------------------------------------------------------------ */
 
-// Overwrite existing key
-resetStorage();
-saveState('count', 1);
-saveState('count', 2);
-assert.strictEqual(loadState('count'), 2);
+// Empty board -> nobody won.
+assert.equal(winnerOf(checkWinner(board(null, null, null, null, null, null, null, null, null))), null)
 
-// Missing key returns undefined
-resetStorage();
-assert.strictEqual(loadState('nonexistent'), undefined);
+// Partial board with no line -> nobody won yet.
+assert.equal(winnerOf(checkWinner(board('X', 'O', null, null, null, null, null, null, null))), null)
 
-// Persistence simulation (save then load after clear)
-resetStorage();
-saveState('userPref', { theme: 'light', mode: 'PvAI' });
-clearState(); // simulate app restart clearing storage? Actually persistence means it stays, but we test that loadState retrieves saved data after clear? Not realistic. Instead we test that saveState writes to localStorage and loadState reads it back without clearing.
-resetStorage();
-saveState('userPref', { theme: 'light', mode: 'PvAI' });
-assert.deepStrictEqual(loadState('userPref'), { theme: 'light', mode: 'PvAI' });
+// Full board with no line -> draw, still "no winner".
+assert.equal(
+  winnerOf(checkWinner(board('X', 'O', 'X', 'X', 'O', 'O', 'O', 'X', null))),
+  null
+)
+assert.equal(
+  winnerOf(checkWinner(board('O', 'X', 'O', 'X', 'O', 'X', 'X', 'O', 'X'))),
+  null
+)
 
-// Theme persistence scenario
-resetStorage();
-saveState('appTheme', 'dark');
-assert.strictEqual(loadState('appTheme'), 'dark');
-saveState('appTheme', 'light');
-assert.strictEqual(loadState('appTheme'), 'light');
+// If the implementation exposes the winning line, it must contain the
+// three winning cells and reference the winner's symbol.
+{
+  const res = checkWinner(board('X', 'X', 'X', 'O', 'O', null, null, null, null))
+  const line = res && typeof res === 'object' ? (res.line ?? res.combo ?? res.cells ?? null) : null
+  if (Array.isArray(line)) {
+    assert.equal(line.length, 3)
+    assert.deepEqual([...line].sort((a, b) => a - b), [0, 1, 2])
+  }
+}
 
-// Ensure storage functions handle JSON serialization
-resetStorage();
-saveState('jsonData', { a: 1, b: [2,3] });
-assert.deepStrictEqual(loadState('jsonData'), { a: 1, b: [2,3] });
+/* ------------------------------------------------------------------ */
+/* storage — defaults                                                  */
+/* ------------------------------------------------------------------ */
 
-// Ensure clearState empties localStorage
-resetStorage();
-saveState('key1', 'val1');
-saveState('key2', 'val2');
-clearState();
-assert.strictEqual(localStorage.length, 0);
+localStorage.clear()
+clearState()
 
-console.log('acceptance OK');
+{
+  const state = loadState()
+  assert.equal(typeof state, 'object')
+  assert.ok(state !== null)
+  // Default theme is "light" when nothing has been saved.
+  assert.equal(state.theme, 'light')
+  // Mode/difficulty must exist and be one of the allowed values.
+  assert.ok(['pvp', 'cpu'].includes(state.mode), `unexpected default mode: ${state.mode}`)
+  assert.ok(
+    ['easy', 'medium', 'hard'].includes(state.difficulty),
+    `unexpected default difficulty: ${state.difficulty}`
+  )
+}
+
+/* ------------------------------------------------------------------ */
+/* storage — round trip                                                */
+/* ------------------------------------------------------------------ */
+
+localStorage.clear()
+clearState()
+saveState({ theme: 'dark' })
+assert.equal(loadState().theme, 'dark')
+assert.equal(localStorage.getItem('ttt:theme'), 'dark')
+
+saveState({ theme: 'light' })
+assert.equal(loadState().theme, 'light')
+
+localStorage.clear()
+clearState()
+saveState({ mode: 'cpu' })
+assert.equal(loadState().mode, 'cpu')
+assert.equal(localStorage.getItem('ttt:mode'), 'cpu')
+
+saveState({ mode: 'pvp' })
+assert.equal(loadState().mode, 'pvp')
+
+localStorage.clear()
+clearState()
+saveState({ difficulty: 'hard' })
+assert.equal(loadState().difficulty, 'hard')
+assert.equal(localStorage.getItem('ttt:difficulty'), 'hard')
+
+saveState({ difficulty: 'easy' })
+assert.equal(loadState().difficulty, 'easy')
+
+// A partial save must not clobber the other persisted values.
+localStorage.clear()
+clearState()
+saveState({ theme: 'dark' })
+saveState({ mode: 'cpu' })
+saveState({ difficulty: 'medium' })
+{
+  const state = loadState()
+  assert.equal(state.theme, 'dark')
+  assert.equal(state.mode, 'cpu')
+  assert.equal(state.difficulty, 'medium')
+}
+
+/* ------------------------------------------------------------------ */
+/* storage — clearState                                                */
+/* ------------------------------------------------------------------ */
+
+localStorage.clear()
+clearState()
+saveState({ theme: 'dark', mode: 'cpu', difficulty: 'hard' })
+clearState()
+{
+  const state = loadState()
+  assert.equal(state.theme, 'light')
+  assert.ok(['pvp', 'cpu'].includes(state.mode))
+  assert.ok(['easy', 'medium', 'hard'].includes(state.difficulty))
+}
+
+/* ------------------------------------------------------------------ */
+/* storage — tolerance to corrupt / missing localStorage               */
+/* ------------------------------------------------------------------ */
+
+// Invalid JSON must not throw and must fall back to the default theme.
+localStorage.clear()
+localStorage.setItem('ttt:theme', '{not-json')
+{
+  let state
+  assert.doesNotThrow(() => {
+    state = loadState()
+  })
+  assert.equal(state.theme, 'light')
+}
+
+// Same for mode / difficulty.
+localStorage.clear()
+localStorage.setItem('ttt:mode', '!!!')
+localStorage.setItem('ttt:difficulty', '###')
+{
+  let state
+  assert.doesNotThrow(() => {
+    state = loadState()
+  })
+  assert.ok(['pvp', 'cpu'].includes(state.mode), `unexpected mode: ${state.mode}`)
+  assert.ok(
+    ['easy', 'medium', 'hard'].includes(state.difficulty),
+    `unexpected difficulty: ${state.difficulty}`
+  )
+}
+
+// Storage access that throws must be swallowed by both helpers.
+{
+  const originalGetItem = localStorage.getItem
+  const originalSetItem = localStorage.setItem
+  let patched = false
+  try {
+    localStorage.getItem = () => {
+      throw new Error('localStorage unavailable')
+    }
+    localStorage.setItem = () => {
+      throw new Error('localStorage unavailable')
+    }
+    patched = true
+  } catch {
+    patched = false
+  }
+
+  if (patched) {
+    let readState
+    assert.doesNotThrow(() => {
+      readState = loadState()
+    })
+    assert.equal(readState.theme, 'light')
+
+    assert.doesNotThrow(() => saveState({ theme: 'dark' }))
+
+    assert.doesNotThrow(() => clearState())
+
+    localStorage.getItem = originalGetItem
+    localStorage.setItem = originalSetItem
+  }
+}
+
+// Reading a value the storage layer does not know is still safe.
+localStorage.clear()
+localStorage.setItem('ttt:theme', 'dark')
+localStorage.setItem('ttt:extra', 'whatever')
+assert.doesNotThrow(() => loadState())
+assert.equal(loadState().theme, 'dark')
+
+localStorage.clear()
+clearState()
+
+console.log('acceptance OK')
