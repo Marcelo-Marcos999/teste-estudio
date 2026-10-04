@@ -1,0 +1,66 @@
+.cell {
+  width: 100%;
+  aspect-ratio: 1;
+  min-width: 80px;
+  min-height: 80px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 3rem;
+  font-weight: 700;
+  font-family: system-ui, -apple-system, sans-serif;
+  background-color: #f8f9fa;
+  border: 2px solid #dee2e6;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background-color 0.15s ease, border-color 0.15s ease, transform 0.1s ease;
+  user-select: none;
+}
+
+.cell:hover:not(.disabled) {
+  background-color: #e9ecef;
+  border-color: #adb5bd;
+}
+
+.cell:active:not(.disabled) {
+  transform: scale(0.98);
+  background-color: #dee2e6;
+}
+
+.cell:focus {
+  outline: none;
+}
+
+.cell:focus-visible {
+  outline: 3px solid #3498db;
+  outline-offset: -3px;
+  z-index: 1;
+}
+
+.cell.disabled {
+  cursor: not-allowed;
+  opacity: 0.7;
+}
+
+.cell.x {
+  color: #e74c3c;
+}
+
+.cell.o {
+  color: #3498db;
+}
+
+.cell.winning {
+  background-color: #fff3cd;
+  border-color: #ffc107;
+  animation: pulse 1.5s ease-in-out infinite;
+}
+
+@keyframes pulse {
+  0%, 100% {
+    box-shadow: 0 0 0 0 rgba(255, 193, 7, 0.4);
+  }
+  50% {
+    box-shadow: 0 0 0 8px rgba(255, 193, 7, 0);
+  }
+}
