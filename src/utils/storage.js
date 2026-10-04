@@ -1,7 +1,7 @@
 import { checkWinner } from './checkWinner.js';
 
 const STORAGE_KEY = 'tictactoe-state';
-const THEME_KEY = 'ttt:theme';
+const THEME_KEY = 'tic-tac-toe-theme';
 const MODE_KEY = 'ttt:mode';
 const DIFFICULTY_KEY = 'ttt:difficulty';
 
