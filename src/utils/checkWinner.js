@@ -17,9 +17,5 @@ export function checkWinner(cells) {
     }
   }
 
-  if (cells.every((cell) => cell === 'X' || cell === 'O')) {
-    return 'draw';
-  }
-
   return null;
 }
