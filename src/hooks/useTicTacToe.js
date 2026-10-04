@@ -1,7 +1,7 @@
 import { useState, useEffect, useCallback } from 'react';
-import { checkWinner } from '../utils/checkWinner';
-import { saveState, loadState, clearState, loadMode, saveMode } from '../utils/storage';
-import { getBestMove } from '../utils/ai';
+import { checkWinner, getWinningLine } from '../utils/checkWinner';
+import { saveState, loadState, clearState, loadMode, saveMode, loadDifficulty, saveDifficulty } from '../utils/storage';
+import { escolherJogada } from '../utils/ai';
 
 const INITIAL_STATE = {
   cells: Array(9).fill(null),
@@ -18,6 +18,8 @@ export function useTicTacToe() {
   });
 
   const [gameMode, setGameModeState] = useState(() => loadMode());
+  const [difficulty, setDifficultyState] = useState(() => loadDifficulty());
+  const [isAiThinking, setIsAiThinking] = useState(false);
 
   useEffect(() => {
     saveState(state);
@@ -64,15 +66,21 @@ export function useTicTacToe() {
     if (state.gameOver) return undefined;
     if (state.currentPlayer !== 'O') return undefined;
 
+    setIsAiThinking(true);
+    const delay = 400 + Math.floor(Math.random() * 300);
     const timer = setTimeout(() => {
-      const idx = getBestMove([...state.cells], 'O');
+      const idx = escolherJogada([...state.cells], difficulty);
       if (idx !== null && idx !== undefined) {
         makeMove(idx);
       }
-    }, 300);
+      setIsAiThinking(false);
+    }, delay);
 
-    return () => clearTimeout(timer);
-  }, [gameMode, state.currentPlayer, state.gameOver, state.cells, makeMove]);
+    return () => {
+      clearTimeout(timer);
+      setIsAiThinking(false);
+    };
+  }, [gameMode, state.currentPlayer, state.gameOver, state.cells, difficulty, makeMove]);
 
   const resetGame = useCallback(() => {
     setState((prev) => ({
@@ -103,16 +111,32 @@ export function useTicTacToe() {
     }));
   }, []);
 
+  const setDifficulty = useCallback((level) => {
+    saveDifficulty(level);
+    setDifficultyState(level);
+    setState((prev) => ({
+      ...prev,
+      cells: Array(9).fill(null),
+      currentPlayer: 'X',
+      gameOver: false,
+      winner: null,
+    }));
+  }, []);
+
   return {
     cells: state.cells,
     currentPlayer: state.currentPlayer,
     gameOver: state.gameOver,
     winner: state.winner,
+    winningLine: getWinningLine(state.cells),
     scores: state.scores,
     gameMode,
+    difficulty,
+    isAiThinking,
     makeMove,
     resetGame,
     resetScores,
     setGameMode,
+    setDifficulty,
   };
 }
