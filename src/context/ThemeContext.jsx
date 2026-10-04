@@ -3,26 +3,33 @@ import { loadTheme, saveTheme } from '../utils/storage';
 
 export const ThemeContext = createContext({ theme: 'light', toggleTheme: () => {} });
 
-function ThemeProvider({ children }) {
+export function applyThemeClass(theme) {
+  if (typeof document !== 'undefined') {
+    document.documentElement.classList.toggle('dark', theme === 'dark');
+  }
+}
+
+export function ThemeProvider({ children }) {
   const [theme, setTheme] = useState(() => loadTheme());
 
-  // Aplicar classe inicial no mount
+  // Aplicar classe inicial no mount (evita flash junto com o script no index.html)
   useEffect(() => {
-    if (typeof document !== 'undefined') {
-      document.documentElement.classList.toggle('dark', theme === 'dark');
-    }
+    applyThemeClass(theme);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  // Atualizar classe quando o tema muda
+  // Atualizar classe e persistir quando o tema muda
   useEffect(() => {
-    if (typeof document !== 'undefined') {
-      document.documentElement.classList.toggle('dark', theme === 'dark');
-    }
+    applyThemeClass(theme);
     saveTheme(theme);
   }, [theme]);
 
   const toggleTheme = () => {
-    setTheme((prev) => (prev === 'light' ? 'dark' : 'light'));
+    setTheme((prev) => {
+      const next = prev === 'light' ? 'dark' : 'light';
+      applyThemeClass(next);
+      return next;
+    });
   };
 
   return (
