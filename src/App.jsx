@@ -1,6 +1,6 @@
 import React from 'react';
 import { useTicTacToe } from './hooks/useTicTacToe';
-import { ThemeContext, ThemeProvider } from './context/ThemeContext';
+import { useTheme } from './context/ThemeContext';
 import Board from './components/Board';
 import StatusBar from './components/StatusBar';
 import ResetButton from './components/ResetButton';
@@ -90,7 +90,7 @@ function App() {
     setDifficulty,
   } = useTicTacToe();
 
-  const { theme, toggleTheme } = useContext(ThemeContext);
+  const { theme, toggleTheme } = useTheme();
 
   const isBoardDisabled = gameOver || isAiThinking;
 
