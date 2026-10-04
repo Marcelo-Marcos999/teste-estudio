@@ -10,7 +10,7 @@ const DEFAULT_MODE = 'pvp';
 const DEFAULT_DIFFICULTY = 'medium';
 
 const VALID_THEMES = ['light', 'dark'];
-const VALID_MODES = ['pvp', 'cpu'];
+const VALID_MODES = ['pvp', 'pvai'];
 const VALID_DIFFICULTIES = ['easy', 'medium', 'hard'];
 
 const DEFAULT_STATE = {
@@ -101,6 +101,8 @@ export const getMode = loadMode;
 export const setMode = saveMode;
 export const getDifficulty = loadDifficulty;
 export const setDifficulty = saveDifficulty;
+export const loadGameMode = loadMode;
+export const saveGameMode = saveMode;
 
 function isValidCells(cells) {
   return (
@@ -181,6 +183,8 @@ export default {
   saveTheme,
   loadMode,
   saveMode,
+  loadGameMode,
+  saveGameMode,
   loadDifficulty,
   saveDifficulty,
   saveState,
