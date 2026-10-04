@@ -5,6 +5,33 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta name="description" content="Jogo da Velha para dois jogadores com persistência local" />
     <title>Jogo da Velha</title>
+    <script>
+      (function () {
+        try {
+          var stored = localStorage.getItem('tic-tac-toe-theme');
+          var theme = stored;
+          try {
+            var parsed = JSON.parse(stored);
+            if (typeof parsed === 'string') theme = parsed;
+          } catch (e) {
+            /* valor não é JSON, usa como está */
+          }
+          if (theme !== 'light' && theme !== 'dark') {
+            theme =
+              window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches
+                ? 'dark'
+                : 'light';
+          }
+          if (theme === 'dark') {
+            document.documentElement.classList.add('dark');
+          } else {
+            document.documentElement.classList.remove('dark');
+          }
+        } catch (e) {
+          /* localStorage indisponível */
+        }
+      })();
+    </script>
   </head>
   <body>
     <div id="root"></div>
