@@ -9,8 +9,8 @@
   font-size: 3rem;
   font-weight: 700;
   font-family: system-ui, -apple-system, sans-serif;
-  background-color: #f8f9fa;
-  border: 2px solid #dee2e6;
+  background-color: var(--cell-bg);
+  border: 2px solid var(--cell-border);
   border-radius: 8px;
   cursor: pointer;
   transition: background-color 0.15s ease, border-color 0.15s ease, transform 0.1s ease;
@@ -20,6 +20,17 @@
 .cell:hover:not(.disabled) {
   background-color: #e9ecef;
   border-color: #adb5bd;
+}
+
+.cell.dark {
+  background-color: var(--cell-bg);
+  border-color: var(--cell-border);
+  color: var(--text);
+}
+
+.cell.dark:hover:not(.disabled) {
+  background-color: #3a3a3a;
+  border-color: #555;
 }
 
 .cell:active:not(.disabled) {
