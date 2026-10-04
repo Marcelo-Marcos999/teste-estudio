@@ -1,5 +1,5 @@
 import assert from 'node:assert/strict';
-import checkWinner from '../src/utils/checkWinner.js';
+import { checkWinner } from '../src/utils/checkWinner.js';
 import { clearState, loadState, saveState } from '../src/utils/storage.js';
 
 // Helper to reset storage before each persistence test
