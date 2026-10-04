@@ -5,7 +5,7 @@ export const ThemeContext = createContext({ theme: 'light', toggleTheme: () => {
 
 export function applyThemeClass(theme) {
   if (typeof document !== 'undefined') {
-    document.documentElement.classList.toggle('dark', theme === 'dark');
+    document.documentElement.setAttribute('data-theme', theme === 'dark' ? 'dark' : 'light');
   }
 }
 
@@ -29,11 +29,7 @@ export function ThemeProvider({ children }) {
   }, [theme]);
 
   const toggleTheme = () => {
-    setTheme((prev) => {
-      const next = prev === 'light' ? 'dark' : 'light';
-      applyThemeClass(next);
-      return next;
-    });
+    setTheme((prev) => (prev === 'light' ? 'dark' : 'light'));
   };
 
   return (
