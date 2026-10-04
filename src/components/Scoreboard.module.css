@@ -14,13 +14,17 @@
   flex-direction: column;
   align-items: center;
   gap: 16px;
-  padding: 16px;
+  padding: 18px;
   margin-top: 16px;
-  background: var(--card-bg, #f8f9fa);
-  border: 1px solid var(--border, transparent);
-  border-radius: 12px;
+  background: var(--card-bg, rgba(255, 255, 255, 0.55));
+  border: 1px solid var(--card-border, rgba(255, 255, 255, 0.7));
+  border-radius: 20px;
   font-family: system-ui, -apple-system, sans-serif;
-  transition: background 0.2s, color 0.2s, box-shadow 0.2s;
+  box-shadow: 0 12px 40px var(--card-shadow, rgba(31, 41, 55, 0.15));
+  backdrop-filter: blur(16px) saturate(160%);
+  -webkit-backdrop-filter: blur(16px) saturate(160%);
+  transition: background 0.3s ease, color 0.3s ease, box-shadow 0.3s ease,
+    border-color 0.3s ease;
 }
 
 .title {
@@ -41,16 +45,23 @@
 }
 
 .scoreItem {
+  position: relative;
   display: flex;
   flex-direction: column;
   align-items: center;
   gap: 4px;
   min-width: 80px;
-  padding: 8px 12px;
-  background: var(--cell-bg, #f5f5f5);
-  border-radius: 10px;
+  padding: 10px 14px;
+  background: var(--cell-bg, rgba(255, 255, 255, 0.6));
+  border: 1px solid var(--cell-border, rgba(148, 163, 184, 0.35));
+  border-radius: 14px;
   animation: fadeUp 0.4s ease-out backwards;
-  transition: background 0.2s, color 0.2s, box-shadow 0.2s;
+  transition: background 0.3s ease, color 0.3s ease, box-shadow 0.3s ease,
+    border-color 0.3s ease, transform 0.2s ease;
+}
+
+.scoreItem:hover {
+  transform: translateY(-2px);
 }
 
 .scoreItem:nth-child(1) {
@@ -75,9 +86,17 @@
 
 .scoreValue {
   font-size: clamp(1.5rem, 4vw, 2rem);
-  font-weight: 700;
+  font-weight: 800;
   color: var(--fg, #2c3e50);
   font-variant-numeric: tabular-nums;
+  transition: color 0.3s ease, transform 0.25s ease, text-shadow 0.3s ease;
+  animation: numberPop 0.35s ease-out;
+}
+
+.scoreX {
+  border-color: var(--x-color, #e74c3c);
+  box-shadow: 0 0 0 1px var(--x-color, rgba(231, 76, 60, 0.35)),
+    0 8px 24px var(--x-glow, rgba(231, 76, 60, 0.35));
 }
 
 .scoreX .scoreLabel,
@@ -85,9 +104,29 @@
   color: var(--x-color, #e74c3c);
 }
 
+.scoreX .scoreValue {
+  text-shadow: 0 0 14px var(--x-glow, rgba(231, 76, 60, 0.55));
+}
+
+.scoreO {
+  border-color: var(--o-color, #3498db);
+  box-shadow: 0 0 0 1px var(--o-color, rgba(52, 152, 219, 0.35)),
+    0 8px 24px var(--o-glow, rgba(52, 152, 219, 0.35));
+}
+
 .scoreO .scoreLabel,
 .scoreO .scoreValue {
   color: var(--o-color, #3498db);
+}
+
+.scoreO .scoreValue {
+  text-shadow: 0 0 14px var(--o-glow, rgba(52, 152, 219, 0.55));
+}
+
+.scoreDraw {
+  border-color: var(--draw-color, #7f8c8d);
+  box-shadow: 0 0 0 1px var(--draw-color, rgba(127, 140, 141, 0.35)),
+    0 8px 24px var(--draw-glow, rgba(127, 140, 141, 0.3));
 }
 
 .scoreDraw .scoreLabel,
@@ -95,21 +134,47 @@
   color: var(--draw-color, #7f8c8d);
 }
 
+.scoreDraw .scoreValue {
+  text-shadow: 0 0 14px var(--draw-glow, rgba(127, 140, 141, 0.5));
+}
+
+@keyframes numberPop {
+  0% {
+    transform: scale(0.7);
+    opacity: 0.4;
+  }
+  60% {
+    transform: scale(1.12);
+    opacity: 1;
+  }
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
 .resetButton {
-  padding: 8px 16px;
+  padding: 9px 18px;
   font-size: 0.875rem;
-  font-weight: 600;
+  font-weight: 700;
   cursor: pointer;
-  border-radius: 8px;
-  border: 1px solid var(--border, currentColor);
-  background: transparent;
+  border-radius: 12px;
+  border: 1px solid var(--btn-border, rgba(148, 163, 184, 0.4));
+  background: var(--btn-bg, rgba(255, 255, 255, 0.6));
   color: var(--fg, inherit);
-  transition: background 0.2s, color 0.2s, transform 0.2s, box-shadow 0.2s;
+  transition: background 0.2s ease, color 0.2s ease, transform 0.15s ease,
+    box-shadow 0.2s ease, border-color 0.2s ease;
 }
 
 .resetButton:hover {
-  background: var(--cell-hover, rgba(0, 0, 0, 0.05));
-  transform: translateY(-1px);
+  background: var(--cell-hover, rgba(99, 102, 241, 0.12));
+  border-color: var(--primary, #6366f1);
+  transform: translateY(-2px);
+  box-shadow: 0 8px 20px var(--btn-shadow, rgba(99, 102, 241, 0.25));
+}
+
+.resetButton:active {
+  transform: translateY(0) scale(0.97);
 }
 
 .resetButton:focus-visible {
@@ -130,5 +195,28 @@
   .scoreItem {
     min-width: 60px;
     padding: 6px 8px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .scoreboard,
+  .scoreItem,
+  .scoreValue,
+  .resetButton {
+    transition: none;
+  }
+
+  .scoreItem {
+    animation: none;
+  }
+
+  .scoreValue {
+    animation: none;
+  }
+
+  .scoreItem:hover,
+  .resetButton:hover,
+  .resetButton:active {
+    transform: none;
   }
 }
