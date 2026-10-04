@@ -11,7 +11,7 @@ const DEFAULT_DIFFICULTY = 'medium';
 
 const VALID_THEMES = ['light', 'dark'];
 const VALID_MODES = ['pvp', 'pvai'];
-const VALID_DIFFICULTIES = ['easy', 'medium', 'hard'];
+const VALID_DIFFICULTIES = ['easy', 'medium', 'hard', 'impossible'];
 
 const DEFAULT_STATE = {
   cells: Array(9).fill(null),
