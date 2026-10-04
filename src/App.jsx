@@ -1,10 +1,12 @@
-import React from 'react';
+import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { useTicTacToe } from './hooks/useTicTacToe';
 import { useTheme } from './context/ThemeContext';
 import Board from './components/Board';
 import StatusBar from './components/StatusBar';
 import ResetButton from './components/ResetButton';
 import Scoreboard from './components/Scoreboard';
+import { loadSound, saveSound } from './utils/storage';
+import { playMove, playWin, playDraw } from './utils/sound';
 import styles from './App.module.css';
 
 function ModeSelector({ gameMode, onSelect }) {
@@ -92,15 +94,61 @@ function App() {
 
   const { theme, toggleTheme } = useTheme();
 
+  const [soundEnabled, setSoundEnabled] = useState(() => loadSound());
+  const prevGameOver = useRef(false);
+
   const isBoardDisabled = gameOver || isAiThinking;
+
+  // Efeitos sonoros reativos ao fim da partida.
+  useEffect(() => {
+    if (gameOver && !prevGameOver.current && soundEnabled) {
+      if (winner === 'draw') {
+        playDraw();
+      } else if (winner) {
+        playWin();
+      }
+    }
+    prevGameOver.current = gameOver;
+  }, [gameOver, winner, soundEnabled]);
+
+  const handleMove = useCallback(
+    (index) => {
+      if (gameOver || cells[index] !== null) return;
+      if (soundEnabled) playMove();
+      makeMove(index);
+    },
+    [cells, gameOver, soundEnabled, makeMove]
+  );
+
+  const toggleSound = useCallback(() => {
+    setSoundEnabled((prev) => {
+      saveSound(!prev);
+      return !prev;
+    });
+  }, []);
 
   return (
     <div className={styles.app}>
       <div className={styles.glow} aria-hidden="true" />
       <div className={styles.container}>
         <header className={styles.header}>
+          <div className={styles.headerActions}>
+            <button
+              type="button"
+              className={styles.soundButton}
+              onClick={toggleSound}
+              aria-label={soundEnabled ? 'Desativar som' : 'Ativar som'}
+              aria-pressed={soundEnabled}
+              title={soundEnabled ? 'Som ligado' : 'Som desligado'}
+            >
+              <span aria-hidden="true">{soundEnabled ? '🔊' : '🔇'}</span>
+            </button>
+          </div>
           <h1 className={styles.title}>
-            <span className={styles.titleGlow}>Jogo da Velha</span>
+            <span className={styles.titleGlow} data-text="TIC//TAC//TOE">
+              TIC//TAC//TOE
+            </span>
+            <span className={styles.visuallyHidden}>Jogo da Velha</span>
           </h1>
           <p className={styles.subtitle}>Desafie a IA em quatro níveis de dificuldade</p>
         </header>
@@ -125,7 +173,7 @@ function App() {
         <div className={styles.boardWrapper}>
           <Board
             cells={cells}
-            onCellClick={makeMove}
+            onCellClick={handleMove}
             disabled={isBoardDisabled}
             winningLine={winningLine}
           />
@@ -139,6 +187,11 @@ function App() {
             scores={scores}
             onResetScores={resetScores}
             difficulty={difficulty}
+            theme={theme}
+            gameMode={gameMode}
+            currentPlayer={currentPlayer}
+            gameOver={gameOver}
+            winner={winner}
           />
         </div>
       </div>
