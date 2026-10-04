@@ -1,34 +1,11 @@
-import React, { createContext, useContext, useEffect, useState } from 'react';
+import React from 'react';
 import { useTicTacToe } from './hooks/useTicTacToe';
-import { loadTheme, saveTheme } from './utils/storage';
+import { ThemeContext, ThemeProvider } from './context/ThemeContext';
 import Board from './components/Board';
 import StatusBar from './components/StatusBar';
 import ResetButton from './components/ResetButton';
 import Scoreboard from './components/Scoreboard';
 import styles from './App.module.css';
-
-export const ThemeContext = createContext({ theme: 'light', toggleTheme: () => {} });
-
-function ThemeProvider({ children }) {
-  const [theme, setTheme] = useState(() => loadTheme());
-
-  useEffect(() => {
-    if (typeof document !== 'undefined') {
-      document.documentElement.setAttribute('data-theme', theme);
-    }
-    saveTheme(theme);
-  }, [theme]);
-
-  const toggleTheme = () => {
-    setTheme((prev) => (prev === 'light' ? 'dark' : 'light'));
-  };
-
-  return (
-    <ThemeContext.Provider value={{ theme, toggleTheme }}>
-      {children}
-    </ThemeContext.Provider>
-  );
-}
 
 function ModeSelector({ gameMode, onSelect }) {
   return (
@@ -169,12 +146,4 @@ function App() {
   );
 }
 
-function AppWithTheme() {
-  return (
-    <ThemeProvider>
-      <App />
-    </ThemeProvider>
-  );
-}
-
-export default AppWithTheme;
+export default App;
