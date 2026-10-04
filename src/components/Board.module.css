@@ -1,14 +1,35 @@
 .board {
+  position: relative;
   display: grid;
   grid-template-columns: repeat(3, 1fr);
   grid-template-rows: repeat(3, 1fr);
-  gap: clamp(4px, 1.5vw, 8px);
+  gap: clamp(6px, 2vw, 12px);
   width: 100%;
   max-width: clamp(280px, 90vw, 480px);
   aspect-ratio: 1 / 1;
   margin: 0 auto;
+  padding: clamp(6px, 2vw, 12px);
+  border-radius: 20px;
+  background: var(--surface, rgba(255, 255, 255, 0.4));
+  border: 1px solid var(--border, rgba(148, 163, 184, 0.35));
   box-shadow: inset 0 0 0 1px var(--border, transparent),
-    inset 0 2px 4px var(--shadow, rgba(0, 0, 0, 0.08));
+    inset 0 2px 4px var(--shadow, rgba(0, 0, 0, 0.08)),
+    0 0 24px rgba(99, 102, 241, 0.18);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  transition: box-shadow 0.4s ease, border-color 0.4s ease;
+}
+
+.board:hover {
+  box-shadow: inset 0 0 0 1px var(--border, transparent),
+    inset 0 2px 4px var(--shadow, rgba(0, 0, 0, 0.08)),
+    0 0 32px rgba(99, 102, 241, 0.32);
+}
+
+.boardWon {
+  border-color: var(--win-glow, #ffc107);
+  box-shadow: inset 0 0 0 1px var(--win-glow, #ffc107),
+    0 0 36px rgba(255, 193, 7, 0.45);
 }
 
 .board > * {
@@ -36,6 +57,89 @@
   }
 }
 
+.winningOverlay {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 3;
+}
+
+.winningLine {
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+}
+
+.winningStroke {
+  stroke: var(--win-glow, #ffc107);
+  stroke-width: 8;
+  stroke-linecap: round;
+  filter: drop-shadow(0 0 10px var(--win-glow, #ffc107));
+  stroke-dasharray: 500;
+  stroke-dashoffset: 500;
+  animation: drawLine 0.6s ease-out forwards, lineGlow 1.6s ease-in-out 0.6s infinite;
+}
+
+@keyframes drawLine {
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+
+@keyframes lineGlow {
+  0%, 100% {
+    opacity: 0.85;
+    filter: drop-shadow(0 0 8px var(--win-glow, #ffc107));
+  }
+  50% {
+    opacity: 1;
+    filter: drop-shadow(0 0 18px var(--win-glow, #ffc107));
+  }
+}
+
+.thinkingOverlay {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  pointer-events: none;
+  z-index: 4;
+  background: rgba(15, 23, 42, 0.12);
+  border-radius: 20px;
+  backdrop-filter: blur(2px);
+  -webkit-backdrop-filter: blur(2px);
+}
+
+.thinkingDot {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  background: linear-gradient(120deg, var(--primary, #6366f1), var(--accent, #ec4899));
+  box-shadow: 0 0 12px var(--primary, #6366f1);
+  animation: thinkingPulse 1s ease-in-out infinite;
+}
+
+.thinkingDot:nth-child(2) {
+  animation-delay: 0.15s;
+}
+
+.thinkingDot:nth-child(3) {
+  animation-delay: 0.3s;
+}
+
+@keyframes thinkingPulse {
+  0%, 100% {
+    transform: scale(0.7);
+    opacity: 0.5;
+  }
+  50% {
+    transform: scale(1.15);
+    opacity: 1;
+  }
+}
+
 @media (max-width: 480px) {
   .board {
     max-width: 100%;
@@ -51,6 +155,20 @@
 
 @media (prefers-reduced-motion: reduce) {
   .board > * {
+    animation: none;
+  }
+
+  .board,
+  .board:hover {
+    transition: none;
+  }
+
+  .winningStroke {
+    animation: none;
+    stroke-dashoffset: 0;
+  }
+
+  .thinkingDot {
     animation: none;
   }
 }
