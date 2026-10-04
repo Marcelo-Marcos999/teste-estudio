@@ -1,5 +1,13 @@
 const STORAGE_KEY = 'tictactoe-state';
 
+const DEFAULT_STATE = {
+  cells: Array(9).fill(null),
+  currentPlayer: 'X',
+  gameOver: false,
+  scores: { X: 0, O: 0, draws: 0 },
+  winner: null,
+};
+
 export function saveState(state) {
   try {
     localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
@@ -17,7 +25,7 @@ export function loadState() {
   } catch (error) {
     console.error('Failed to load game state:', error);
   }
-  return null;
+  return DEFAULT_STATE;
 }
 
 export function clearState() {
