@@ -3,14 +3,67 @@
   font-size: 1.125rem;
   font-weight: 600;
   text-align: center;
-  color: #2c3e50;
-  background-color: #ecf0f1;
+  color: var(--text);
+  background-color: var(--panel-bg);
   border-radius: 6px;
   min-height: 2.5rem;
   display: flex;
   align-items: center;
   justify-content: center;
+  gap: 12px;
   transition: background-color 0.2s ease, color 0.2s ease;
+}
+
+.statusBar.dark {
+  background-color: var(--panel-bg);
+  color: var(--text);
+}
+
+.message {
+  flex: 1 1 auto;
+  text-align: center;
+}
+
+.indicators {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.modeIndicator {
+  font-size: 0.8rem;
+  font-weight: 500;
+  opacity: 0.85;
+  white-space: nowrap;
+}
+
+.themeToggle,
+.themeButton {
+  cursor: pointer;
+  border: none;
+  border-radius: 6px;
+  background-color: transparent;
+  color: var(--text);
+  font-size: 1.1rem;
+  line-height: 1;
+  padding: 4px 8px;
+  transition: background-color 0.2s ease, transform 0.1s ease;
+}
+
+.themeToggle:hover,
+.themeButton:hover {
+  background-color: rgba(127, 127, 127, 0.2);
+}
+
+.themeToggle:active,
+.themeButton:active {
+  transform: scale(0.95);
+}
+
+.themeToggle:focus-visible,
+.themeButton:focus-visible {
+  outline: 2px solid #3498db;
+  outline-offset: 2px;
 }
 
 .statusBar--xTurn {
