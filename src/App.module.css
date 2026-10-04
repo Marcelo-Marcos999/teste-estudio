@@ -360,6 +360,9 @@ body {
 
 .modeButton {
   flex: 1;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
   padding: 10px 12px;
   font-family: 'Orbitron', 'Rajdhani', 'Courier New', monospace;
   font-size: 0.85rem;
@@ -410,7 +413,6 @@ body {
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 6px;
   padding: 10px 8px;
   font-family: 'Rajdhani', 'Orbitron', 'Courier New', monospace;
   font-size: 0.9rem;
@@ -448,11 +450,25 @@ body {
   animation: activePulse 2.4s ease-in-out infinite;
 }
 
+.modeIcon,
 .difficultyIcon {
-  font-size: 1.05rem;
-  line-height: 1;
+  width: 20px;
+  height: 20px;
+  margin-right: 6px;
+  vertical-align: middle;
+  color: #1a1a2e;
+  filter: drop-shadow(0 0 4px rgba(180, 100, 255, 0.4));
+  transition: filter 0.2s ease, color 0.2s ease;
 }
 
+.modeButton:hover .modeIcon,
+.modeButtonActive .modeIcon,
+.difficultyButton:hover:not(:disabled) .difficultyIcon,
+.difficultyButtonActive .difficultyIcon {
+  filter: drop-shadow(0 0 6px rgba(180, 100, 255, 0.7));
+}
+
+.modeLabel,
 .difficultyLabel {
   line-height: 1;
 }
