@@ -4,6 +4,7 @@ const STORAGE_KEY = 'tictactoe-state';
 const THEME_KEY = 'tic-tac-toe-theme';
 const MODE_KEY = 'ttt:mode';
 const DIFFICULTY_KEY = 'ttt:difficulty';
+const SOUND_KEY = 'ttt:sound';
 
 const DEFAULT_THEME = 'light';
 const DEFAULT_MODE = 'pvp';
@@ -83,7 +84,8 @@ function getSystemTheme() {
 }
 
 export function loadTheme() {
-  return readEnum(THEME_KEY, VALID_THEMES, getSystemTheme());
+  // Neon Grid ("light") é o tema padrão; Synthwave é o alternativo ("dark").
+  return readEnum(THEME_KEY, VALID_THEMES, DEFAULT_THEME);
 }
 
 export function saveTheme(theme) {
@@ -107,6 +109,17 @@ export function loadDifficulty() {
 
 export function saveDifficulty(difficulty) {
   return writeEnum(DIFFICULTY_KEY, difficulty, VALID_DIFFICULTIES);
+}
+
+export function loadSound() {
+  const raw = safeGetItem(SOUND_KEY);
+  // Padrão ligado; só é desativado explicitamente pelo usuário.
+  if (raw === null || raw === undefined) return true;
+  return raw !== 'off' && raw !== 'false';
+}
+
+export function saveSound(enabled) {
+  return safeSetItem(SOUND_KEY, enabled ? 'on' : 'off');
 }
 
 export const getTheme = loadTheme;
@@ -199,6 +212,8 @@ export default {
   saveGameMode,
   loadDifficulty,
   saveDifficulty,
+  loadSound,
+  saveSound,
   saveState,
   loadState,
   clearState,
