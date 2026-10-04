@@ -50,7 +50,9 @@ const ResetButton = ({ onClick, disabled = false, loading = false }) => {
       aria-label="Reiniciar jogo"
       aria-busy={loading}
     >
-      {loading ? <Spinner /> : <RefreshIcon />}
+      <span className={styles.iconWrap} aria-hidden="true">
+        {loading ? <Spinner /> : <RefreshIcon />}
+      </span>
       <span>{loading ? 'Reiniciando...' : 'Reiniciar'}</span>
     </button>
   );
