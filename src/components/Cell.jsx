@@ -15,8 +15,10 @@ function Cell({ value, index, onClick, disabled, winning = false, draw = false }
   const classNames = [
     styles.cell,
     value ? styles.filled : '',
+    value ? styles.pop : '',
     value === 'X' ? styles.x : value === 'O' ? styles.o : '',
     winning ? styles.winning : '',
+    winning ? styles.glow : '',
     draw ? styles.draw : '',
     disabled ? styles.disabled : '',
   ]
