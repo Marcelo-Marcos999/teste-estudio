@@ -80,11 +80,13 @@
 }
 
 .icon {
-  transition: transform 0.4s ease;
+  transition: transform 0.4s ease, filter 0.25s ease;
+  filter: drop-shadow(0 0 4px var(--icon-glow, rgba(0, 240, 255, 0.45)));
 }
 
 .resetButton:hover:not(:disabled) .icon {
   transform: rotate(180deg);
+  filter: none;
 }
 
 .spinner {
