@@ -10,6 +10,8 @@
   --bg: #05060a;
   --fg: #d6f7ff;
   --muted: #6fb8c9;
+  --icon-color: #aef7ff;
+  --icon-glow: rgba(0, 240, 255, 0.55);
   --primary: #00f0ff;
   --secondary: #ff2bd6;
   --accent: #f5ff3d;
@@ -72,6 +74,8 @@
   --bg: #140021;
   --fg: #efe0ff;
   --muted: #b18fd6;
+  --icon-color: #e9d5ff;
+  --icon-glow: rgba(176, 38, 255, 0.6);
   --primary: #b026ff;
   --secondary: #00ffc8;
   --accent: #ff5f9e;
@@ -456,16 +460,21 @@ body {
   height: 20px;
   margin-right: 6px;
   vertical-align: middle;
-  color: #1a1a2e;
-  filter: drop-shadow(0 0 4px rgba(180, 100, 255, 0.4));
+  color: var(--icon-color, #aef7ff);
+  filter: drop-shadow(0 0 4px var(--icon-glow, rgba(0, 240, 255, 0.55)));
   transition: filter 0.2s ease, color 0.2s ease;
 }
 
 .modeButton:hover .modeIcon,
+.difficultyButton:hover:not(:disabled) .difficultyIcon {
+  filter: drop-shadow(0 0 6px var(--icon-glow, rgba(0, 240, 255, 0.7)));
+}
+
+/* Nos botões ativos o fundo é um gradiente claro: o ícone precisa ser escuro. */
 .modeButtonActive .modeIcon,
-.difficultyButton:hover:not(:disabled) .difficultyIcon,
 .difficultyButtonActive .difficultyIcon {
-  filter: drop-shadow(0 0 6px rgba(180, 100, 255, 0.7));
+  color: var(--fg-on-primary, #02121a);
+  filter: drop-shadow(0 0 4px rgba(0, 0, 0, 0.35));
 }
 
 .modeLabel,

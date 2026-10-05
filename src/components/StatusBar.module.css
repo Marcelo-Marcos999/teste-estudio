@@ -112,14 +112,14 @@
   width: 20px;
   height: 20px;
   vertical-align: middle;
-  color: #1a1a2e;
-  filter: drop-shadow(0 0 4px rgba(180, 100, 255, 0.4));
+  color: var(--icon-color, #aef7ff);
+  filter: drop-shadow(0 0 4px var(--icon-glow, rgba(0, 240, 255, 0.55)));
   transition: filter 0.2s ease, color 0.2s ease;
 }
 
 .themeButton:hover .themeIcon,
 .themeButton:active .themeIcon {
-  filter: drop-shadow(0 0 6px rgba(180, 100, 255, 0.7));
+  filter: drop-shadow(0 0 6px var(--icon-glow, rgba(0, 240, 255, 0.7)));
 }
 
 .themeButton:active {
